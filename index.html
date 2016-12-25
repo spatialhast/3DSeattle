@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8' />
+    <title>3D map</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.29.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.29.0/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id='map'></div>
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoiaGFzdCIsImEiOiJjaXgzaTB2MWYwMDByMm9waXN4MHVubzVvIn0.6P3uO_1T4gjRWejVT-593A';
+
+        if (!mapboxgl.supported()) {
+            alert('Your browser does not support Mapbox GL');
+        } else {
+
+
+            var map = new mapboxgl.Map({
+                //style: 'mapbox://styles/mapbox/light-v9',
+                style: 'mapbox://styles/mapbox/streets-v9',
+                center: [-122.3364, 47.6073],
+                zoom: 15.1,
+                pitch: 45,
+                bearing: -17.6,
+                container: 'map',
+                hash: true
+            });
+
+            map.addControl(new mapboxgl.NavigationControl({
+                position: 'top-right'
+            }));
+
+
+
+
+            //Seattle -122.4313551, 47.6131891
+            //Bellevue -122.2010118, 47.5968188
+
+
+
+
+            map.on('load', function() {
+
+                /*
+			map.addLayer({
+                'id': '3d-buildings',
+                'source': 'composite',
+                'source-layer': 'building',
+                'filter': ['==', 'extrude', 'true'],
+                'type': 'fill-extrusion',
+                'minzoom': 14,
+                'paint': {
+                    'fill-extrusion-color': '#aaa',
+                    'fill-extrusion-height': {
+                        'type': 'identity',
+                        'property': 'height'
+                    },
+                    'fill-extrusion-base': {
+                        'type': 'identity',
+                        'property': 'min_height'
+                    },
+                    'fill-extrusion-opacity': .7
+                }
+            });
+			*/
+
+
+
+
+                map.addLayer({
+                    "type": "fill-extrusion",
+                    "source": "composite",
+                    "id": "3dbuildings",
+                    "filter": [
+                        "all", [
+                            "==",
+                            "underground",
+                            "false"
+                        ],
+                        [
+                            "==",
+                            "extrude",
+                            "true"
+                        ]
+                    ],
+                    "paint": {
+                        "fill-extrusion-color": "#eee8dc",
+                        "fill-extrusion-opacity": {
+                            "stops": [
+                                [15, 0.7],
+                                [17, 0.6]
+                            ]
+                        },
+                        "fill-extrusion-height": {
+                            "stops": [
+                                [{
+                                    "zoom": 15,
+                                    "value": 0
+                                }, 0],
+                                [{
+                                    "zoom": 15,
+                                    "value": 1000
+                                }, 0],
+                                [{
+                                    "zoom": 15,
+                                    "value": 2000
+                                }, 0],
+                                [{
+                                    "zoom": 15.2,
+                                    "value": 0
+                                }, 0],
+                                [{
+                                    "zoom": 15.2,
+                                    "value": 1000
+                                }, 1000],
+                                [{
+                                    "zoom": 15.2,
+                                    "value": 2000
+                                }, 20]
+                            ],
+                            "property": "height",
+                            "type": "exponential",
+                            "base": 1
+                        },
+                        "fill-extrusion-base": {
+                            "stops": [
+                                [{
+                                    "zoom": 15,
+                                    "value": 0
+                                }, 0],
+                                [{
+                                    "zoom": 15,
+                                    "value": 1000
+                                }, 0],
+                                [{
+                                    "zoom": 15,
+                                    "value": 2000
+                                }, 0],
+                                [{
+                                    "zoom": 15.2,
+                                    "value": 0
+                                }, 0],
+                                [{
+                                    "zoom": 15.2,
+                                    "value": 1000
+                                }, 1000],
+                                [{
+                                    "zoom": 15.2,
+                                    "value": 2000
+                                }, 0]
+                            ],
+                            "property": "min_height"
+                        }
+                    },
+                    "minzoom": 14,
+                    "source-layer": "building",
+                    "interactive": true
+                });
+
+
+            });
+
+        };
+    </script>
+
+</body>
+
+</html>
